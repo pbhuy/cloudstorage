@@ -47,7 +47,7 @@ public class AuthController {
 
         if (error == null) {
             model.addAttribute("success", "Signup successful.");
-            return "signup";
+            return "redirect:/login";
         } else {
             model.addAttribute("error", error);
         }

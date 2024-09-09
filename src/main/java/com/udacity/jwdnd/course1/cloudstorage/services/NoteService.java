@@ -11,6 +11,7 @@ import java.util.List;
 public class NoteService {
 
     private final NoteMapper noteMapper;
+
     @Autowired
     public NoteService(NoteMapper noteMapper) {
         this.noteMapper = noteMapper;

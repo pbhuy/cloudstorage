@@ -34,7 +34,6 @@ public class NoteController {
         } else {
             noteService.createNote(note, userId);
         }
-
         return "redirect:/result?success";
     }
 

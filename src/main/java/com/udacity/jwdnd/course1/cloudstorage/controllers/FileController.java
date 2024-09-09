@@ -44,7 +44,7 @@ public class FileController {
 
         }
 
-        if(uploadError!=null) {
+        if (uploadError != null) {
             model.addAttribute("error", uploadError);
             redirectAttributes.addFlashAttribute("error", uploadError);
             return "redirect:/result?error";
@@ -55,27 +55,22 @@ public class FileController {
     }
 
     @GetMapping("/delete")
-    public String deleteFile(@RequestParam("id") int fileid, Authentication authentication, RedirectAttributes redirectAttributes){
-        String username = (String) authentication.getPrincipal();
-        User user = userMapper.getUserByName(username);
-        String deleteError = null;
-
-        if(fileid > 0){
+    public String deleteFile(@RequestParam("id") int fileid, Authentication authentication, RedirectAttributes redirectAttributes) {
+        if (fileid > 0) {
             fileService.deleteFile(fileid);
             return "redirect:/result?success";
         }
-
 
         redirectAttributes.addAttribute("error", "Can not delete the file");
         return "redirect:/result?error";
     }
 
     @GetMapping("/download/{fileId}")
-    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable Integer fileId){
+    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable Integer fileId) {
         File file = fileService.getFileById(fileId);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(file.getContenttype()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+ file.getFilename()+"\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
                 .body(new ByteArrayResource(file.getFiledata()));
     }
 }
