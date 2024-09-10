@@ -6,10 +6,7 @@ import com.udacity.jwdnd.course1.cloudstorage.mappers.UserMapper;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -22,19 +19,34 @@ public class NoteController {
         this.noteService = noteService;
         this.userMapper = userMapper;
     }
-
     @PostMapping
-    public String handleAddUpdateNote(Authentication authentication, Note note){
-        String username = (String) authentication.getPrincipal();
-        User user = userMapper.getUserByName(username);
-        Integer userId = user.getUserId();
+    public String processNoteAddOrUpdate(Authentication authentication, @ModelAttribute Note note) {
+        User currentUser = getCurrentUser(authentication);
 
-        if (note.getNoteid() != null) {
-            noteService.updateNote(note);
+        if (isExistingNote(note)) {
+            updateExistingNote(note);
         } else {
-            noteService.createNote(note, userId);
+            createNewNote(note, currentUser.getUserId());
         }
+
         return "redirect:/result?success";
+    }
+
+    private User getCurrentUser(Authentication authentication) {
+        String username = (String) authentication.getPrincipal();
+        return userMapper.getUserByName(username);
+    }
+
+    private boolean isExistingNote(Note note) {
+        return note.getNoteid() != null;
+    }
+
+    private void updateExistingNote(Note note) {
+        noteService.updateNote(note);
+    }
+
+    private void createNewNote(Note note, Integer userId) {
+        noteService.createNote(note, userId);
     }
 
     @GetMapping("/delete")

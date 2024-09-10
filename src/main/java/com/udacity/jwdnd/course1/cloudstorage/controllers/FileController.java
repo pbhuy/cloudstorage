@@ -29,29 +29,43 @@ public class FileController {
     }
 
     @PostMapping
-    public String handleFileUpload(Model model, @RequestParam("fileUpload") MultipartFile fileUpload, Authentication authentication, RedirectAttributes redirectAttributes) throws IOException {
-        String uploadError = null;
+    public String processFileUpload(
+            Model model,
+            @RequestParam("file") MultipartFile uploadedFile,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes
+    ) throws IOException {
+        String errorMessage = validateFileUpload(uploadedFile, authentication);
 
-        String username = (String) authentication.getPrincipal();
-        User user = userMapper.getUserByName(username);
-
-        if (fileUpload.isEmpty()) {
-            uploadError = "Please select a non-empty file";
-        }
-
-        if (!fileService.isFileAvailable(fileUpload.getOriginalFilename(), user.getUserId())) {
-            uploadError = "File already exists";
-
-        }
-
-        if (uploadError != null) {
-            model.addAttribute("error", uploadError);
-            redirectAttributes.addFlashAttribute("error", uploadError);
+        if (errorMessage != null) {
+            model.addAttribute("error", errorMessage);
+            redirectAttributes.addFlashAttribute("error", errorMessage);
             return "redirect:/result?error";
         }
 
-        fileService.createFile(fileUpload, user.getUserId());
+        saveUploadedFile(uploadedFile, authentication);
         return "redirect:/result?success";
+    }
+
+    private String validateFileUpload(MultipartFile file, Authentication authentication) {
+        if (file.isEmpty()) {
+            return "Upload failed: The selected file is empty. Please choose a valid file and try again.";
+        }
+
+        String username = (String) authentication.getPrincipal();
+        User currentUser = userMapper.getUserByName(username);
+
+        if (!fileService.isFileAvailable(file.getOriginalFilename(), currentUser.getUserId())) {
+            return "Upload failed: A file with this name already exists in your account. Please rename the file or choose a different one.";
+        }
+
+        return null;
+    }
+
+    private void saveUploadedFile(MultipartFile file, Authentication authentication) throws IOException {
+        String username = (String) authentication.getPrincipal();
+        User currentUser = userMapper.getUserByName(username);
+        fileService.createFile(file, currentUser.getUserId());
     }
 
     @GetMapping("/delete")

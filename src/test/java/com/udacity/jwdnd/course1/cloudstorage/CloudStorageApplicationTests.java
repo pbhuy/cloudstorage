@@ -45,7 +45,7 @@ class CloudStorageApplicationTests {
     }
 
     @Test
-    public void unauthorizedUserAccessLoginSignupPage() {
+    public void UnauthorizedUserAccessLoginSignupPageTest() {
         driver.get("http://localhost:" + this.port + "/login");
         Assertions.assertEquals("Login", driver.getTitle());
 
@@ -54,7 +54,7 @@ class CloudStorageApplicationTests {
     }
 
     @Test
-    public void authenticateUser() throws InterruptedException {
+    public void UserAuthenticationTest() throws InterruptedException {
         // Create a test account
         doMockSignUp("Authenticate", "User", "AU", "123");
         doLogIn("AU", "123");
@@ -80,7 +80,7 @@ class CloudStorageApplicationTests {
     }
 
     @Test
-    public void createNote() throws InterruptedException {
+    public void NoteCreationTest() throws InterruptedException {
         // Create a test account
         doMockSignUp("Create", "Note", "CN", "123");
         doLogIn("CN", "123");
@@ -123,8 +123,8 @@ class CloudStorageApplicationTests {
     }
 
     @Test
-    public void editNote() throws InterruptedException {
-        createNote();
+    public void NoteUpdateTest() throws InterruptedException {
+        NoteCreationTest();
         WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
 
         // Click edit button
@@ -153,8 +153,8 @@ class CloudStorageApplicationTests {
     }
 
     @Test
-    public void deleteNote() throws InterruptedException {
-        createNote();
+    public void NoteDeletionTest() throws InterruptedException {
+        NoteCreationTest();
         WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
 
         // Click delete button
@@ -181,7 +181,7 @@ class CloudStorageApplicationTests {
     }
 
     @Test
-    public void createCredential() throws InterruptedException {
+    public void CredentialCreationTest() throws InterruptedException {
         // Create a test user
         doMockSignUp("Create", "Credential", "CC", "123");
         doLogIn("CC", "123");
@@ -236,8 +236,8 @@ class CloudStorageApplicationTests {
     }
 
     @Test
-    public void editCredentials() throws InterruptedException {
-        createCredential();
+    public void CredentialUpdateTest() throws InterruptedException {
+        CredentialCreationTest();
 
         WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
 
@@ -278,8 +278,8 @@ class CloudStorageApplicationTests {
     }
 
     @Test
-    public void deleteCredentials() throws InterruptedException {
-        createCredential();
+    public void CredentialDeletionTest() throws InterruptedException {
+        CredentialCreationTest();
         WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
 
         // Click delete button
